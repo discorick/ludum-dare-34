@@ -3,5 +3,6 @@ class HomeController < ApplicationController
   end
 
   def sandbox
+    render layout: "swindytree"
   end
 end

@@ -458,3 +458,197 @@ Started GET "/assets/phaser.map" for ::1 at 2015-12-12 17:18:27 -0600
 
 
 Started GET "/assets/phaser.js" for ::1 at 2015-12-12 17:18:27 -0600
+
+
+Started GET "/" for ::1 at 2015-12-12 17:23:13 -0600
+Processing by HomeController#index as HTML
+  Rendered home/index.html.erb within layouts/application (1.2ms)
+Completed 200 OK in 548ms (Views: 537.7ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/assets/swindytree.self-7c370d9536d7d0d6a0f7cd7f9826692acd93e4fb05ba46f7b630b879740343d3.js?body=1" for ::1 at 2015-12-12 17:23:14 -0600
+
+
+Started GET "/assets/sandbox.self-b105e52f06409a3b37ef982c76c70bc1fd2f8d851d9a411b02030e2e6ef91b07.js?body=1" for ::1 at 2015-12-12 17:23:14 -0600
+
+
+Started GET "/assets/sky.png" for ::1 at 2015-12-12 17:23:15 -0600
+
+
+Started GET "/assets/platform.png" for ::1 at 2015-12-12 17:23:15 -0600
+
+
+Started GET "/assets/star.png" for ::1 at 2015-12-12 17:23:15 -0600
+
+
+Started GET "/assets/dude.png" for ::1 at 2015-12-12 17:23:15 -0600
+
+
+Started GET "/" for ::1 at 2015-12-12 17:23:27 -0600
+Processing by HomeController#index as HTML
+  Rendered home/index.html.erb within layouts/application (0.0ms)
+Completed 200 OK in 295ms (Views: 289.3ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/assets/turbolinks.self-c37727e9bd6b2735da5c311aa83fead54ed0be6cc8bd9a65309e9c5abe2cbfff.js?body=1" for ::1 at 2015-12-12 17:23:27 -0600
+
+
+Started GET "/assets/phaser.min.self-830fd3ffb70e42e6a91a926c31dda700b7e0439477727a895da62928c3172a81.js?body=1" for ::1 at 2015-12-12 17:23:27 -0600
+
+
+Started GET "/assets/home.self-e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855.css?body=1" for ::1 at 2015-12-12 17:23:27 -0600
+
+
+Started GET "/assets/jquery.self-a714331225dda820228db323939889f149aec0127aeb06255646b616ba1ca419.js?body=1" for ::1 at 2015-12-12 17:23:27 -0600
+
+
+Started GET "/assets/jquery_ujs.self-d456baa54c1fa6be2ec3711f0a72ddf7a5b2f34a6b4f515f33767d6207b7d4b3.js?body=1" for ::1 at 2015-12-12 17:23:27 -0600
+
+
+Started GET "/assets/application.self-e80e8f2318043e8af94dddc2adad5a4f09739a8ebb323b3ab31cd71d45fd9113.css?body=1" for ::1 at 2015-12-12 17:23:27 -0600
+
+
+Started GET "/assets/home.self-88f28aa166121c4a285b3ed2e83c6a145abefe71ccb472901c819bd2014425cb.js?body=1" for ::1 at 2015-12-12 17:23:27 -0600
+
+
+Started GET "/assets/application.self-f8806224e027f3e3f0138ea9ce99319e298dfdb323304d1f1be6eae8e8c74724.js?body=1" for ::1 at 2015-12-12 17:23:27 -0600
+
+
+Started GET "/assets/sky.png" for ::1 at 2015-12-12 17:23:28 -0600
+
+
+Started GET "/assets/platform.png" for ::1 at 2015-12-12 17:23:28 -0600
+
+
+Started GET "/assets/star.png" for ::1 at 2015-12-12 17:23:28 -0600
+
+
+Started GET "/assets/dude.png" for ::1 at 2015-12-12 17:23:28 -0600
+
+
+Started GET "/sandbox" for ::1 at 2015-12-12 17:23:33 -0600
+Processing by HomeController#sandbox as HTML
+Completed 500 Internal Server Error in 13ms (ActiveRecord: 0.0ms)
+
+ActionView::MissingTemplate (Missing template layouts/swindytree with {:locale=>[:en], :formats=>[:html], :variants=>[], :handlers=>[:erb, :builder, :raw, :ruby, :jbuilder]}. Searched in:
+  * "/Users/rex/Sites/heroku/ludum-dare-34/app/views"
+):
+  app/controllers/home_controller.rb:6:in `sandbox'
+
+
+  Rendered /Users/rex/.rvm/gems/ruby-2.2.3/gems/actionpack-4.2.5/lib/action_dispatch/middleware/templates/rescues/_source.erb (6.6ms)
+  Rendered /Users/rex/.rvm/gems/ruby-2.2.3/gems/actionpack-4.2.5/lib/action_dispatch/middleware/templates/rescues/_trace.html.erb (2.4ms)
+  Rendered /Users/rex/.rvm/gems/ruby-2.2.3/gems/actionpack-4.2.5/lib/action_dispatch/middleware/templates/rescues/_request_and_response.html.erb (1.0ms)
+  Rendered /Users/rex/.rvm/gems/ruby-2.2.3/gems/actionpack-4.2.5/lib/action_dispatch/middleware/templates/rescues/missing_template.html.erb within rescues/layout (51.8ms)
+  Rendered /Users/rex/.rvm/gems/ruby-2.2.3/gems/web-console-2.2.1/lib/web_console/templates/_markup.html.erb (0.4ms)
+  Rendered /Users/rex/.rvm/gems/ruby-2.2.3/gems/web-console-2.2.1/lib/web_console/templates/_inner_console_markup.html.erb within layouts/inlined_string (0.4ms)
+  Rendered /Users/rex/.rvm/gems/ruby-2.2.3/gems/web-console-2.2.1/lib/web_console/templates/_prompt_box_markup.html.erb within layouts/inlined_string (0.6ms)
+  Rendered /Users/rex/.rvm/gems/ruby-2.2.3/gems/web-console-2.2.1/lib/web_console/templates/style.css.erb within layouts/inlined_string (0.3ms)
+  Rendered /Users/rex/.rvm/gems/ruby-2.2.3/gems/web-console-2.2.1/lib/web_console/templates/console.js.erb within layouts/javascript (42.8ms)
+  Rendered /Users/rex/.rvm/gems/ruby-2.2.3/gems/web-console-2.2.1/lib/web_console/templates/main.js.erb within layouts/javascript (0.2ms)
+  Rendered /Users/rex/.rvm/gems/ruby-2.2.3/gems/web-console-2.2.1/lib/web_console/templates/error_page.js.erb within layouts/javascript (0.3ms)
+  Rendered /Users/rex/.rvm/gems/ruby-2.2.3/gems/web-console-2.2.1/lib/web_console/templates/index.html.erb (100.4ms)
+
+
+Started GET "/sandbox" for ::1 at 2015-12-12 17:24:45 -0600
+Processing by HomeController#sandbox as HTML
+  Rendered home/sandbox.html.erb within layouts/swindytree (0.3ms)
+Completed 500 Internal Server Error in 215ms (ActiveRecord: 0.0ms)
+
+ActionView::Template::Error (Asset filtered out and will not be served: add `Rails.application.config.assets.precompile += %w( swindytree.js )` to `config/initializers/assets.rb` and restart your server):
+    3: <head>
+    4:   <title>Justdoit</title>
+    5:   <%= stylesheet_link_tag    'swindytree', media: 'all', 'data-turbolinks-track' => true %>
+    6:   <%= javascript_include_tag 'swindytree', 'data-turbolinks-track' => true %>
+    7:   <%= csrf_meta_tags %>
+    8: </head>
+    9: <body>
+  app/views/layouts/swindytree.html.erb:6:in `_app_views_layouts_swindytree_html_erb__1091563199453907332_70296817016960'
+  app/controllers/home_controller.rb:6:in `sandbox'
+
+
+  Rendered /Users/rex/.rvm/gems/ruby-2.2.3/gems/actionpack-4.2.5/lib/action_dispatch/middleware/templates/rescues/_source.erb (5.5ms)
+  Rendered /Users/rex/.rvm/gems/ruby-2.2.3/gems/actionpack-4.2.5/lib/action_dispatch/middleware/templates/rescues/_trace.html.erb (3.1ms)
+  Rendered /Users/rex/.rvm/gems/ruby-2.2.3/gems/actionpack-4.2.5/lib/action_dispatch/middleware/templates/rescues/_request_and_response.html.erb (0.9ms)
+  Rendered /Users/rex/.rvm/gems/ruby-2.2.3/gems/actionpack-4.2.5/lib/action_dispatch/middleware/templates/rescues/template_error.html.erb within rescues/layout (51.3ms)
+  Rendered /Users/rex/.rvm/gems/ruby-2.2.3/gems/web-console-2.2.1/lib/web_console/templates/_markup.html.erb (0.4ms)
+  Rendered /Users/rex/.rvm/gems/ruby-2.2.3/gems/web-console-2.2.1/lib/web_console/templates/_inner_console_markup.html.erb within layouts/inlined_string (0.4ms)
+  Rendered /Users/rex/.rvm/gems/ruby-2.2.3/gems/web-console-2.2.1/lib/web_console/templates/_prompt_box_markup.html.erb within layouts/inlined_string (0.3ms)
+  Rendered /Users/rex/.rvm/gems/ruby-2.2.3/gems/web-console-2.2.1/lib/web_console/templates/style.css.erb within layouts/inlined_string (0.4ms)
+  Rendered /Users/rex/.rvm/gems/ruby-2.2.3/gems/web-console-2.2.1/lib/web_console/templates/console.js.erb within layouts/javascript (38.9ms)
+  Rendered /Users/rex/.rvm/gems/ruby-2.2.3/gems/web-console-2.2.1/lib/web_console/templates/main.js.erb within layouts/javascript (0.4ms)
+  Rendered /Users/rex/.rvm/gems/ruby-2.2.3/gems/web-console-2.2.1/lib/web_console/templates/error_page.js.erb within layouts/javascript (0.4ms)
+  Rendered /Users/rex/.rvm/gems/ruby-2.2.3/gems/web-console-2.2.1/lib/web_console/templates/index.html.erb (86.6ms)
+
+
+Started GET "/sandbox" for ::1 at 2015-12-12 17:27:06 -0600
+Processing by HomeController#sandbox as HTML
+  Rendered home/sandbox.html.erb within layouts/swindytree (0.1ms)
+Completed 500 Internal Server Error in 36ms (ActiveRecord: 0.0ms)
+
+ActionView::Template::Error (Asset filtered out and will not be served: add `Rails.application.config.assets.precompile += %w( swindytree.css )` to `config/initializers/assets.rb` and restart your server):
+    2: <html>
+    3: <head>
+    4:   <title>Justdoit</title>
+    5:   <%= stylesheet_link_tag    'swindytree', media: 'all', 'data-turbolinks-track' => true %>
+    6:   <%= javascript_include_tag 'swindytree', 'data-turbolinks-track' => true %>
+    7:   <%= csrf_meta_tags %>
+    8: </head>
+  app/views/layouts/swindytree.html.erb:5:in `_app_views_layouts_swindytree_html_erb__1091563199453907332_70296817016960'
+  app/controllers/home_controller.rb:6:in `sandbox'
+
+
+  Rendered /Users/rex/.rvm/gems/ruby-2.2.3/gems/actionpack-4.2.5/lib/action_dispatch/middleware/templates/rescues/_source.erb (12.5ms)
+  Rendered /Users/rex/.rvm/gems/ruby-2.2.3/gems/actionpack-4.2.5/lib/action_dispatch/middleware/templates/rescues/_trace.html.erb (2.0ms)
+  Rendered /Users/rex/.rvm/gems/ruby-2.2.3/gems/actionpack-4.2.5/lib/action_dispatch/middleware/templates/rescues/_request_and_response.html.erb (0.8ms)
+  Rendered /Users/rex/.rvm/gems/ruby-2.2.3/gems/actionpack-4.2.5/lib/action_dispatch/middleware/templates/rescues/template_error.html.erb within rescues/layout (52.7ms)
+  Rendered /Users/rex/.rvm/gems/ruby-2.2.3/gems/web-console-2.2.1/lib/web_console/templates/_markup.html.erb (0.5ms)
+  Rendered /Users/rex/.rvm/gems/ruby-2.2.3/gems/web-console-2.2.1/lib/web_console/templates/_inner_console_markup.html.erb within layouts/inlined_string (0.3ms)
+  Rendered /Users/rex/.rvm/gems/ruby-2.2.3/gems/web-console-2.2.1/lib/web_console/templates/_prompt_box_markup.html.erb within layouts/inlined_string (0.2ms)
+  Rendered /Users/rex/.rvm/gems/ruby-2.2.3/gems/web-console-2.2.1/lib/web_console/templates/style.css.erb within layouts/inlined_string (0.4ms)
+  Rendered /Users/rex/.rvm/gems/ruby-2.2.3/gems/web-console-2.2.1/lib/web_console/templates/console.js.erb within layouts/javascript (39.5ms)
+  Rendered /Users/rex/.rvm/gems/ruby-2.2.3/gems/web-console-2.2.1/lib/web_console/templates/main.js.erb within layouts/javascript (0.4ms)
+  Rendered /Users/rex/.rvm/gems/ruby-2.2.3/gems/web-console-2.2.1/lib/web_console/templates/error_page.js.erb within layouts/javascript (0.4ms)
+  Rendered /Users/rex/.rvm/gems/ruby-2.2.3/gems/web-console-2.2.1/lib/web_console/templates/index.html.erb (91.5ms)
+
+
+Started GET "/sandbox" for ::1 at 2015-12-12 17:27:14 -0600
+Processing by HomeController#sandbox as HTML
+  Rendered home/sandbox.html.erb within layouts/swindytree (1.3ms)
+Completed 200 OK in 438ms (Views: 429.7ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/assets/swindytree.self-4a4c63b3b379fe307cf83e414c8ae532911fc0a1f3cb82fac49a7c36a8c5b78a.css?body=1" for ::1 at 2015-12-12 17:27:15 -0600
+
+
+Started GET "/assets/sandbox.self-e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855.css?body=1" for ::1 at 2015-12-12 17:27:15 -0600
+
+
+Started GET "/assets/jquery_ujs.self-d456baa54c1fa6be2ec3711f0a72ddf7a5b2f34a6b4f515f33767d6207b7d4b3.js?body=1" for ::1 at 2015-12-12 17:27:15 -0600
+
+
+Started GET "/assets/turbolinks.self-c37727e9bd6b2735da5c311aa83fead54ed0be6cc8bd9a65309e9c5abe2cbfff.js?body=1" for ::1 at 2015-12-12 17:27:15 -0600
+
+
+Started GET "/assets/jquery.self-a714331225dda820228db323939889f149aec0127aeb06255646b616ba1ca419.js?body=1" for ::1 at 2015-12-12 17:27:15 -0600
+
+
+Started GET "/assets/phaser.min.self-830fd3ffb70e42e6a91a926c31dda700b7e0439477727a895da62928c3172a81.js?body=1" for ::1 at 2015-12-12 17:27:15 -0600
+
+
+Started GET "/assets/sandbox.self-b105e52f06409a3b37ef982c76c70bc1fd2f8d851d9a411b02030e2e6ef91b07.js?body=1" for ::1 at 2015-12-12 17:27:15 -0600
+
+
+Started GET "/assets/swindytree.self-7c370d9536d7d0d6a0f7cd7f9826692acd93e4fb05ba46f7b630b879740343d3.js?body=1" for ::1 at 2015-12-12 17:27:15 -0600
+
+
+Started GET "/assets/sky.png" for ::1 at 2015-12-12 17:27:16 -0600
+
+
+Started GET "/assets/star.png" for ::1 at 2015-12-12 17:27:16 -0600
+
+
+Started GET "/assets/platform.png" for ::1 at 2015-12-12 17:27:16 -0600
+
+
+Started GET "/assets/dude.png" for ::1 at 2015-12-12 17:27:16 -0600
