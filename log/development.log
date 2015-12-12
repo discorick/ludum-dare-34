@@ -652,3 +652,24 @@ Started GET "/assets/platform.png" for ::1 at 2015-12-12 17:27:16 -0600
 
 
 Started GET "/assets/dude.png" for ::1 at 2015-12-12 17:27:16 -0600
+
+
+Started GET "/" for ::1 at 2015-12-12 17:29:00 -0600
+Processing by HomeController#index as HTML
+  Rendered home/index.html.erb within layouts/application (0.6ms)
+Completed 200 OK in 340ms (Views: 338.4ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/assets/application.self-e3aeec5fd5935b99828fb8f43ec8a1afd3aad7f84cc15ac5eafc65b5ad8ef866.css?body=1" for ::1 at 2015-12-12 17:29:01 -0600
+
+
+Started GET "/assets/sky.png" for ::1 at 2015-12-12 17:29:02 -0600
+
+
+Started GET "/assets/dude.png" for ::1 at 2015-12-12 17:29:02 -0600
+
+
+Started GET "/assets/platform.png" for ::1 at 2015-12-12 17:29:02 -0600
+
+
+Started GET "/assets/star.png" for ::1 at 2015-12-12 17:29:02 -0600
