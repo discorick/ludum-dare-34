@@ -13,8 +13,8 @@ function preload() {
 
     game.physics.startSystem(Phaser.Physics.P2JS);
     game.physics.p2.setImpactEvents(true);
-    game.physics.p2.gravity.y = 1200;
-    
+//    game.physics.p2.gravity.y = 98;
+
     game.load.spritesheet('sun', 'assets/dizzy_sun.png', 80, 80, 24);
     game.load.spritesheet('tree', 'assets/tree-strip.png', 16, 16);
     game.load.audio('bgmusic', 'assets/bgmusic01.ogg');
@@ -45,7 +45,7 @@ function createWorld() {
     game.physics.p2.enable(topFloor);
     topFloor.body.setRectangle(game.stage.width, worldThick);
     topFloor.body.static = true;
-    topFloor.key = "topFlworldoor";
+    topFloor.key = "world";
 
     bottomFloor = game.add.graphics(game.stage.width / 2, game.stage.height);
     game.physics.p2.enable(bottomFloor);
@@ -82,11 +82,10 @@ function create() {
 
     game.physics.p2.updateBoundsCollisionGroup();
 
-    //  Length, xAnchor, yAnchor
-    createRope(20, 200, game.stage.height - 10);
-    createSun();
-
     createWorld();
+    createSun();
+    //  Length, xAnchor, yAnchor
+    createRope(20, 200, game.stage.height - 100);
 
     game.physics.p2.setWorldMaterial(worldMaterial, true, true, true, true);
 
@@ -99,10 +98,15 @@ function create() {
 
     cursors = game.input.keyboard.createCursorKeys();
 
-    music = game.add.audio('bgmusic',1,true);
+    music = game.add.audio('bgmusic', 1, true);
     music.loop = true;
     music.play();
 
+    game.time.events.loop(Phaser.Timer.SECOND, updateCounter, this);
+}
+
+function updateCounter() {
+    game.physics.p2.gravity.x = game.rnd.integerInRange(-10, 10);
 }
 
 function update() {
@@ -124,24 +128,21 @@ function createRope(length, xAnchor, yAnchor) {
     var lastRect;
     var height = 32; //  Height for the physics body - your image height is 8px
     var width = 32; //  This is the width for the physics body. If too small the rectangles will get scrambled together.
-    var maxForce = 2000; //  The force that holds the rectangles together.
+    var maxForce = 200; //  The force that holds the rectangles together.
 
     for (var i = 0; i <= length; i++) {
         var x = xAnchor; //  All rects are on the same x position
         var y = yAnchor - (i * height); //  Every new rect is positioned below the last
-
-        if (i % 2 === 0) {
-            //  Add sprite (and switch frame every 2nd time)
-            newRect = game.add.sprite(x, y, 'tree', game.rnd.integerInRange(0, 5));
-            newRect.scale.setTo(2, 2);
-        } else {
-            newRect = game.add.sprite(x, y, 'tree', game.rnd.integerInRange(0, 5));
-            newRect.scale.setTo(2, 2);
-            lastRect.bringToTop();
-        }
+        
+        newRect = game.add.sprite(x, y, 'tree', game.rnd.integerInRange(0, 5));
+        newRect.scale.setTo(2, 2);
 
         //  Enable physicsbody
-        game.physics.p2.enable(newRect, false);
+        game.physics.p2.enable(newRect, true);
+        
+        //newRect.body.damping = 0;
+        
+        //newRect.body.angularDamping = 0;
 
         //  Set custom rectangle
         newRect.body.setRectangle(width, height);
@@ -150,38 +151,46 @@ function createRope(length, xAnchor, yAnchor) {
 
         newRect.body.setCollisionGroup(trunkCollisionGroup);
 
+        newRect.body.collides([trunkCollisionGroup, worldCollisionGroup], clearAllConstraints, this);
+
         if (i === 0) {
             newRect.body.static = true;
         } else {
-            newRect.body.mass = length / i; //  Reduce mass for evey rope element
-            newRect.body.collides([trunkCollisionGroup, worldCollisionGroup], clearAllConstraints, this);
+            newRect.body.mass = 0.1 * (length / i);
+//            newRect.body.mass *= newRect.body.mass;
+        }
+
+        if (i === length) {
+            //game.physics.p2.createSpring(newRect, sun, 200, 10, 0.01);
+//            newRect.body.static = true;
         }
 
         //  After the first rectangle is created we can add the constraint
         if (lastRect) {
-            game.physics.p2.createRevoluteConstraint(newRect, [0, 15], lastRect, [0, -15], maxForce);
+            game.physics.p2.createRevoluteConstraint(newRect, [-width / 2, height / 2], lastRect, [-width / 2, -height / 2], maxForce);
+            //game.physics.p2.createRevoluteConstraint(newRect, [0, height / 2], lastRect, [0, -height / 2], maxForce * (length / i));
+            game.physics.p2.createRevoluteConstraint(newRect, [width / 2, height / 2], lastRect, [width / 2, -height / 2], maxForce);
         }
-
         lastRect = newRect;
-
     }
 }
 
 function createSun() {
-  sun_shadow = game.add.sprite(167, 5, 'sun');
-  sun_shadow.animations.add('whirl');
-  sun_shadow.animations.play('whirl', 20, true);
-  sun_shadow.anchor.set(-0.02);
-  sun_shadow.tint = 0x000000;
-  sun_shadow.alpha = 0.6;
+    sun_shadow = game.add.sprite(167, 5, 'sun');
+    sun_shadow.animations.add('whirl');
+    sun_shadow.animations.play('whirl', 20, true);
+    sun_shadow.anchor.set(-0.02);
+    sun_shadow.tint = 0x000000;
+    sun_shadow.alpha = 0.6;
 
-  sun = game.add.sprite(167, 5, 'sun');
-  sun.animations.add('whirl');
-  sun.animations.play('whirl', 20, true);
+    sun = game.add.sprite(167, 5, 'sun');
+    sun.animations.add('whirl');
+    sun.animations.play('whirl', 20, true);
 }
 
 function clearAllConstraints(body1, body2) {
     if (body2.sprite.key == "world") {
+        game.physics.p2.gravity.y = 980;
         var allConstraints = game.physics.p2.world.constraints.splice(0, game.physics.p2.world.constraints.length);
         if (allConstraints.length > 0) {
             for (i = 0; i <= allConstraints.length; i++) {
