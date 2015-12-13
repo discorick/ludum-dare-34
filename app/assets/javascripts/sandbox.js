@@ -14,11 +14,7 @@ function preload() {
     game.physics.startSystem(Phaser.Physics.P2JS);
     game.physics.p2.setImpactEvents(true);
     game.physics.p2.gravity.y = 1200;
-
-    game.load.image('sky', 'assets/sky.png');
-    game.load.image('ground', 'assets/platform.png');
-    game.load.image('star', 'assets/star.png');
-    game.load.spritesheet('dude', 'assets/dude.png', 32, 48);
+    
     game.load.spritesheet('tree', 'assets/tree-strip.png', 16, 16);
 }
 
@@ -32,25 +28,25 @@ var trunkCollisionGroup = null;
 
 function createWorld() {
     left = game.add.graphics(-worldThick / 2, game.stage.height / 2);
-    game.physics.p2.enable(left, true);
+    game.physics.p2.enable(left);
     left.body.setRectangle(worldThick, game.stage.height);
     left.body.static = true;
     left.key = "world";
 
-    right = game.add.graphics(game.stage.width - worldThick / 2, game.stage.height / 2);
-    game.physics.p2.enable(right, true);
+    right = game.add.graphics(game.stage.width, game.stage.height / 2);
+    game.physics.p2.enable(right);
     right.body.setRectangle(worldThick, game.stage.height);
     right.body.static = true;
     right.key = "world";
 
     topFloor = game.add.graphics(game.stage.width / 2, -worldThick / 2);
-    game.physics.p2.enable(topFloor, true);
+    game.physics.p2.enable(topFloor);
     topFloor.body.setRectangle(game.stage.width, worldThick);
     topFloor.body.static = true;
     topFloor.key = "topFlworldoor";
 
-    bottomFloor = game.add.graphics(game.stage.width / 2, game.stage.height - worldThick / 2);
-    game.physics.p2.enable(bottomFloor, true);
+    bottomFloor = game.add.graphics(game.stage.width / 2, game.stage.height);
+    game.physics.p2.enable(bottomFloor);
     bottomFloor.body.setRectangle(game.stage.width, worldThick);
     bottomFloor.body.static = true;
     bottomFloor.key = "world";
@@ -83,9 +79,6 @@ function create() {
     worldCollisionGroup = game.physics.p2.createCollisionGroup();
 
     game.physics.p2.updateBoundsCollisionGroup();
-
-    //star = game.add.sprite(200, 200, 'star');
-    //game.physics.p2.enable(star, true);
 
     //  Length, xAnchor, yAnchor
     createRope(20, 200, game.stage.height - 10);
@@ -137,15 +130,10 @@ function createRope(length, xAnchor, yAnchor) {
 
         newRect.body.setCollisionGroup(trunkCollisionGroup);
 
-        //newRect.body.collides([trunkCollisionGroup, worldCollisionGroup]);
-
         if (i === 0) {
             newRect.body.static = true;
         } else {
-            //  Anchor the first one created
-            //            newRect.body.velocity.x = 400; //  Give it a push :) just for fun
             newRect.body.mass = length / i; //  Reduce mass for evey rope element
-
             newRect.body.collides([trunkCollisionGroup, worldCollisionGroup], clearAllConstraints, this);
         }
 
