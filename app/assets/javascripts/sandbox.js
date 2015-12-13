@@ -61,6 +61,8 @@ function createRoot() {
     count++;
 }
 
+var maxBias = 16;
+
 function createTrunk() {
     if (!trunks) {
         trunks = game.add.group();
@@ -72,7 +74,8 @@ function createTrunk() {
             y: 2.0
         }, 200, Phaser.Easing.Bounce.Out, true);
     } else {
-        var bias = ((sun.x + (sun.width / 2)) - (game.stage.width / 2)) / 8;
+        var bias = ((sun.x + sun.width / 2) - lastTrunk.x) / 8;
+        bias = Math.abs(bias) > maxBias ? Math.sign(bias) * maxBias : bias;
         var trunk = game.add.sprite(lastTrunk.x + bias, lastTrunk.y - 32, 'tree', game.rnd.integerInRange(0, 5));
         trunk.anchor.setTo(0.5, 1);
         game.add.tween(trunk.scale).to({
@@ -119,8 +122,9 @@ function update() {
 }
 
 
-var windPower = 2;
+var windPower = 1;
 var power = 0;
+var maxCum = 30;
 
 function shakeTree() {
     if (game.time.now % 9 < 2)
@@ -129,7 +133,7 @@ function shakeTree() {
     for (var i = 0, len = trunks.children.length; i < len; i++) {
         var trunk = trunks.children[i];
         if(trunk.y < game.camera.position.y + windowHeight / 2 + 32) {
-            var newX = trunk.x + (power * i);//trunk.x + (power * i);
+            var newX = trunk.x + (power * (i > maxCum ? maxCum : i));
             trunk.x += (newX - trunk.x) * 0.1;
         }
     }
