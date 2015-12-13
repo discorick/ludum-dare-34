@@ -14,6 +14,7 @@ function preload() {
     game.load.image('star', 'assets/star.png');
     game.load.spritesheet('dude', 'assets/dude.png', 32, 48);
     game.load.spritesheet('sun', 'assets/dizzy_sun.png', 80, 80, 24);
+    game.load.audio('bgmusic', 'assets/bgmusic01.ogg');
 }
 
 
@@ -29,6 +30,9 @@ function create() {
     createSun();
 
     cursors = game.input.keyboard.createCursorKeys();
+
+    music = game.add.audio('bgmusic',1,true);
+    music.play('',0,1,true);
 
 }
 
