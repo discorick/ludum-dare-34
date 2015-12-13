@@ -15,7 +15,9 @@ function preload() {
     game.physics.p2.setImpactEvents(true);
     game.physics.p2.gravity.y = 1200;
     
+    game.load.spritesheet('sun', 'assets/dizzy_sun.png', 80, 80, 24);
     game.load.spritesheet('tree', 'assets/tree-strip.png', 16, 16);
+    game.load.audio('bgmusic', 'assets/bgmusic01.ogg');
 }
 
 var worldThick = 50;
@@ -82,6 +84,7 @@ function create() {
 
     //  Length, xAnchor, yAnchor
     createRope(20, 200, game.stage.height - 10);
+    createSun();
 
     createWorld();
 
@@ -93,10 +96,27 @@ function create() {
     var groundTrunkCM = game.physics.p2.createContactMaterial(trunkMaterial, trunkMaterial, {
         friction: 0.6
     });
+
+    cursors = game.input.keyboard.createCursorKeys();
+
+    music = game.add.audio('bgmusic',1,true);
+    music.loop = true;
+    music.play();
+
 }
 
 function update() {
-
+    if (cursors.left.isDown) {
+        if (sun.x > 10) {
+            sun_shadow.x -= 6;
+            sun.x -= 6;
+        }
+    } else if (cursors.right.isDown) {
+        if (sun.x < 324) {
+            sun_shadow.x += 6;
+            sun.x += 6;
+        }
+    }
 }
 
 function createRope(length, xAnchor, yAnchor) {
@@ -145,6 +165,19 @@ function createRope(length, xAnchor, yAnchor) {
         lastRect = newRect;
 
     }
+}
+
+function createSun() {
+  sun_shadow = game.add.sprite(167, 5, 'sun');
+  sun_shadow.animations.add('whirl');
+  sun_shadow.animations.play('whirl', 20, true);
+  sun_shadow.anchor.set(-0.02);
+  sun_shadow.tint = 0x000000;
+  sun_shadow.alpha = 0.6;
+
+  sun = game.add.sprite(167, 5, 'sun');
+  sun.animations.add('whirl');
+  sun.animations.play('whirl', 20, true);
 }
 
 function clearAllConstraints(body1, body2) {
