@@ -1,4 +1,9 @@
-var game = new Phaser.Game(414, 736, Phaser.AUTO, 'game', {
+var windowWidth = 414;
+var windowHeight = 736;
+var cameraPos = null;
+var cameraLerp = 0.1;
+
+var game = new Phaser.Game(windowWidth, windowHeight, Phaser.AUTO, 'game', {
     preload: preload,
     create: create,
     update: update,
@@ -11,105 +16,72 @@ function preload() {
     game.scale.pageAlignVertically = true;
     game.scale.refresh();
 
-    game.physics.startSystem(Phaser.Physics.P2JS);
-    game.physics.p2.setImpactEvents(true);
-//    game.physics.p2.gravity.y = 98;
-
     game.load.spritesheet('sun', 'assets/dizzy_sun.png', 80, 80, 24);
     game.load.spritesheet('tree', 'assets/tree-strip.png', 16, 16);
     game.load.audio('bgmusic', 'assets/bgmusic01.ogg');
-}
-
-var worldThick = 50;
-var left = null;
-var right = null;
-var topFloor = null;
-var bottomFloor = null;
-var worldCollisionGroup = null;
-var trunkCollisionGroup = null;
-
-function createWorld() {
-    left = game.add.graphics(-worldThick / 2, game.stage.height / 2);
-    game.physics.p2.enable(left);
-    left.body.setRectangle(worldThick, game.stage.height);
-    left.body.static = true;
-    left.key = "world";
-
-    right = game.add.graphics(game.stage.width, game.stage.height / 2);
-    game.physics.p2.enable(right);
-    right.body.setRectangle(worldThick, game.stage.height);
-    right.body.static = true;
-    right.key = "world";
-
-    topFloor = game.add.graphics(game.stage.width / 2, -worldThick / 2);
-    game.physics.p2.enable(topFloor);
-    topFloor.body.setRectangle(game.stage.width, worldThick);
-    topFloor.body.static = true;
-    topFloor.key = "world";
-
-    bottomFloor = game.add.graphics(game.stage.width / 2, game.stage.height);
-    game.physics.p2.enable(bottomFloor);
-    bottomFloor.body.setRectangle(game.stage.width, worldThick);
-    bottomFloor.body.static = true;
-    bottomFloor.key = "world";
-
-    left.body.setCollisionGroup(worldCollisionGroup);
-    right.body.setCollisionGroup(worldCollisionGroup);
-    topFloor.body.setCollisionGroup(worldCollisionGroup);
-    bottomFloor.body.setCollisionGroup(worldCollisionGroup);
-
-    left.body.collides([trunkCollisionGroup, worldCollisionGroup]);
-    right.body.collides([trunkCollisionGroup, worldCollisionGroup]);
-    topFloor.body.collides([trunkCollisionGroup, worldCollisionGroup]);
-    bottomFloor.body.collides([trunkCollisionGroup, worldCollisionGroup]);
 }
 
 function render() {
     //game.debug.geom(left, '#0fffff');
 }
 
-var worldMaterial = null;
-var trunkMaterial = null;
-
 function create() {
     game.stage.backgroundColor = 0xC0FFEE;
-
-    worldMaterial = game.physics.p2.createMaterial('worldMaterial');
-    trunkMaterial = game.physics.p2.createMaterial('trunkMaterial');
-
-    trunkCollisionGroup = game.physics.p2.createCollisionGroup();
-    worldCollisionGroup = game.physics.p2.createCollisionGroup();
-
-    game.physics.p2.updateBoundsCollisionGroup();
-
-    createWorld();
-    createSun();
-    //  Length, xAnchor, yAnchor
-    createRope(20, 200, game.stage.height - 100);
-
-    game.physics.p2.setWorldMaterial(worldMaterial, true, true, true, true);
-
-    var groundWorldCM = game.physics.p2.createContactMaterial(trunkMaterial, worldMaterial, {
-        friction: 0.1
-    });
-    var groundTrunkCM = game.physics.p2.createContactMaterial(trunkMaterial, trunkMaterial, {
-        friction: 0.6
-    });
+    game.world.setBounds(0, 0, windowWidth, windowHeight * 10);
+    game.camera.setPosition(0, game.world.height);
+    cameraPos = new Phaser.Point(0, game.world.height);
 
     cursors = game.input.keyboard.createCursorKeys();
+    createSun();
 
     music = game.add.audio('bgmusic', 1, true);
     music.loop = true;
     music.play();
 
-    game.time.events.loop(Phaser.Timer.SECOND, updateCounter, this);
+    createRoot();
+    game.time.events.loop(Phaser.Timer.SECOND, createTrunk, this);
 }
 
-function updateCounter() {
-    game.physics.p2.gravity.x = game.rnd.integerInRange(-10, 10);
+var count = 0;
+var root = null;
+var trunks = null;
+var lastTrunk = null;
+
+function createRoot() {
+    root = game.add.sprite(game.world.width / 2, game.world.height - 32, 'tree', 0);
+    root.anchor.setTo(0.5, 1);
+    root.scale.setTo(2, 2);
+    count++;
+}
+
+function createTrunk() {
+    if(!trunks) {
+        trunks = game.add.group();
+        var trunk = game.add.sprite(root.x, root.y - 32, 'tree', game.rnd.integerInRange(0, 5));
+        trunk.anchor.setTo(0.5, 1);
+        game.add.tween(trunk.scale).to({x: 2.0, y: 2.0}, 200, Phaser.Easing.Bounce.Out, true);
+    } else {
+        var trunk = game.add.sprite(lastTrunk.x, lastTrunk.y - 32, 'tree', game.rnd.integerInRange(0, 5));
+        trunk.anchor.setTo(0.5, 1);
+        game.add.tween(trunk.scale).to({x: 2.0, y: 2.0}, 200, Phaser.Easing.Bounce.Out, true);
+    }
+    trunks.add(trunk);
+    lastTrunk = trunk;
+    count++;
+}
+
+function Camerafollow(target, offsetX, offsetY) {
+    cameraPos.x += (target.x - cameraPos.x + offsetX) * cameraLerp; // smoothly adjust the x position
+    cameraPos.y += (target.y - cameraPos.y + offsetY) * cameraLerp; // smoothly adjust the y position
+    game.camera.focusOnXY(cameraPos.x, cameraPos.y); // apply smoothed virtual positions to actual camera
 }
 
 function update() {
+    if(lastTrunk)
+        Camerafollow(lastTrunk, 0, 100);
+    
+    updateSun();
+    
     if (cursors.left.isDown) {
         if (sun.x > 10) {
             sun_shadow.x -= 6;
@@ -123,56 +95,8 @@ function update() {
     }
 }
 
-function createRope(length, xAnchor, yAnchor) {
-
-    var lastRect;
-    var height = 32; //  Height for the physics body - your image height is 8px
-    var width = 32; //  This is the width for the physics body. If too small the rectangles will get scrambled together.
-    var maxForce = 200; //  The force that holds the rectangles together.
-
-    for (var i = 0; i <= length; i++) {
-        var x = xAnchor; //  All rects are on the same x position
-        var y = yAnchor - (i * height); //  Every new rect is positioned below the last
-        
-        newRect = game.add.sprite(x, y, 'tree', game.rnd.integerInRange(0, 5));
-        newRect.scale.setTo(2, 2);
-
-        //  Enable physicsbody
-        game.physics.p2.enable(newRect, true);
-        
-        //newRect.body.damping = 0;
-        
-        //newRect.body.angularDamping = 0;
-
-        //  Set custom rectangle
-        newRect.body.setRectangle(width, height);
-
-        newRect.body.setMaterial(trunkMaterial);
-
-        newRect.body.setCollisionGroup(trunkCollisionGroup);
-
-        newRect.body.collides([trunkCollisionGroup, worldCollisionGroup], clearAllConstraints, this);
-
-        if (i === 0) {
-            newRect.body.static = true;
-        } else {
-            newRect.body.mass = 0.1 * (length / i);
-//            newRect.body.mass *= newRect.body.mass;
-        }
-
-        if (i === length) {
-            //game.physics.p2.createSpring(newRect, sun, 200, 10, 0.01);
-//            newRect.body.static = true;
-        }
-
-        //  After the first rectangle is created we can add the constraint
-        if (lastRect) {
-            game.physics.p2.createRevoluteConstraint(newRect, [-width / 2, height / 2], lastRect, [-width / 2, -height / 2], maxForce);
-            //game.physics.p2.createRevoluteConstraint(newRect, [0, height / 2], lastRect, [0, -height / 2], maxForce * (length / i));
-            game.physics.p2.createRevoluteConstraint(newRect, [width / 2, height / 2], lastRect, [width / 2, -height / 2], maxForce);
-        }
-        lastRect = newRect;
-    }
+function updateSun() {
+    sun.y = sun_shadow.y = game.camera.position.y - windowHeight / 2;
 }
 
 function createSun() {
@@ -186,16 +110,4 @@ function createSun() {
     sun = game.add.sprite(167, 5, 'sun');
     sun.animations.add('whirl');
     sun.animations.play('whirl', 20, true);
-}
-
-function clearAllConstraints(body1, body2) {
-    if (body2.sprite.key == "world") {
-        game.physics.p2.gravity.y = 980;
-        var allConstraints = game.physics.p2.world.constraints.splice(0, game.physics.p2.world.constraints.length);
-        if (allConstraints.length > 0) {
-            for (i = 0; i <= allConstraints.length; i++) {
-                game.physics.p2.removeConstraint(allConstraints[i]);
-            }
-        }
-    }
 }
