@@ -18,6 +18,7 @@ function preload() {
     game.scale.pageAlignVertically = true;
     game.scale.refresh();
 
+    game.load.image('bg', 'assets/bg.png');
     game.load.spritesheet('sun', 'assets/dizzy_sun.png', 80, 80, 24);
     game.load.spritesheet('tree', 'assets/tree-strip.png', 16, 16);
     game.load.audio('bgmusic', 'assets/bgmusic01.ogg');
@@ -30,8 +31,10 @@ function render() {
 var createTrunkEvent = null;
 
 function create() {
+    game.add.sprite(0, 0, 'bg');
+    
     game.stage.backgroundColor = 0xC0FFEE;
-    game.world.setBounds(0, 0, windowWidth, windowHeight * 10);
+    game.world.setBounds(0, 0, windowWidth, 7160);
     game.camera.setPosition(0, game.world.height);
     cameraPos = new Phaser.Point(0, game.world.height);
 
@@ -61,6 +64,7 @@ function createRoot() {
 function createTrunk() {
     if (!trunks) {
         trunks = game.add.group();
+        
         var trunk = game.add.sprite(root.x, root.y - 32, 'tree', game.rnd.integerInRange(0, 5));
         trunk.anchor.setTo(0.5, 1);
         game.add.tween(trunk.scale).to({
@@ -96,6 +100,9 @@ function update() {
 
         if (trunks)
             checkTrunkOutofBound();
+        
+        if (trunks)
+            shakeTree();
     }
 
     if (cursors.left.isDown) {
@@ -107,6 +114,23 @@ function update() {
         if (sun.x < 324) {
             sun_shadow.x += 6;
             sun.x += 6;
+        }
+    }
+}
+
+
+var windPower = 2;
+var power = 0;
+
+function shakeTree() {
+    if (game.time.now % 9 < 2)
+        power = game.rnd.integerInRange(-windPower, windPower);
+    
+    for (var i = 0, len = trunks.children.length; i < len; i++) {
+        var trunk = trunks.children[i];
+        if(trunk.y < game.camera.position.y + windowHeight / 2 + 32) {
+            var newX = trunk.x + (power * i);//trunk.x + (power * i);
+            trunk.x += (newX - trunk.x) * 0.1;
         }
     }
 }
@@ -123,6 +147,7 @@ function checkTrunkOutofBound() {
             }
             game.time.events.remove(createTrunkEvent);
             gameover = true;
+            break;
         }
     }
 }
