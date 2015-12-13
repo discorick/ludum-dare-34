@@ -13,6 +13,7 @@ function preload() {
     game.load.image('ground', 'assets/platform.png');
     game.load.image('star', 'assets/star.png');
     game.load.spritesheet('dude', 'assets/dude.png', 32, 48);
+    game.load.spritesheet('sun', 'assets/dizzy_sun.png', 80, 80, 24);
 }
 
 
@@ -25,10 +26,24 @@ function create() {
     
     //  Length, xAnchor, yAnchor
     createRope(40, 400, 64);
+    createSun();
+
+    cursors = game.input.keyboard.createCursorKeys();
+
 }
 
 function update() {
-    
+    if (cursors.left.isDown) {
+        if (sun.x > 10) {
+            sun_shadow.x -= 6;
+            sun.x -= 6;
+        }
+    } else if (cursors.right.isDown) {
+        if (sun.x < 324) {
+            sun_shadow.x += 6;
+            sun.x += 6;
+        }
+    }
 }
 
 function createRope(length, xAnchor, yAnchor) {
@@ -81,4 +96,17 @@ function createRope(length, xAnchor, yAnchor) {
 
     }
 
+}
+
+function createSun() {
+    sun_shadow = game.add.sprite(167, 0, 'sun');
+    sun_shadow.animations.add('whirl');
+    sun_shadow.animations.play('whirl', 20, true);
+    sun_shadow.anchor.set(-0.02);
+    sun_shadow.tint = 0x000000;
+    sun_shadow.alpha = 0.6;
+
+    sun = game.add.sprite(167, 0, 'sun');
+    sun.animations.add('whirl');
+    sun.animations.play('whirl', 20, true);
 }
