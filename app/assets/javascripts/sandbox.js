@@ -61,7 +61,8 @@ function createTrunk() {
         trunk.anchor.setTo(0.5, 1);
         game.add.tween(trunk.scale).to({x: 2.0, y: 2.0}, 200, Phaser.Easing.Bounce.Out, true);
     } else {
-        var trunk = game.add.sprite(lastTrunk.x, lastTrunk.y - 32, 'tree', game.rnd.integerInRange(0, 5));
+        var bias = ((sun.x + (sun.width / 2)) - (game.stage.width / 2)) / 8;
+        var trunk = game.add.sprite(lastTrunk.x + bias, lastTrunk.y - 32, 'tree', game.rnd.integerInRange(0, 5));
         trunk.anchor.setTo(0.5, 1);
         game.add.tween(trunk.scale).to({x: 2.0, y: 2.0}, 200, Phaser.Easing.Bounce.Out, true);
     }
