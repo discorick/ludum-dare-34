@@ -3,6 +3,8 @@ var windowHeight = 736;
 var cameraPos = null;
 var cameraLerp = 0.1;
 
+var gameover = false;
+
 var game = new Phaser.Game(windowWidth, windowHeight, Phaser.AUTO, 'game', {
     preload: preload,
     create: create,
@@ -25,6 +27,8 @@ function render() {
     //game.debug.geom(left, '#0fffff');
 }
 
+var createTrunkEvent = null;
+
 function create() {
     game.stage.backgroundColor = 0xC0FFEE;
     game.world.setBounds(0, 0, windowWidth, windowHeight * 10);
@@ -39,7 +43,7 @@ function create() {
     music.play();
 
     createRoot();
-    game.time.events.loop(Phaser.Timer.SECOND, createTrunk, this);
+    createTrunkEvent = game.time.events.loop(Phaser.Timer.SECOND / 2, createTrunk, this);
 }
 
 var count = 0;
@@ -55,16 +59,22 @@ function createRoot() {
 }
 
 function createTrunk() {
-    if(!trunks) {
+    if (!trunks) {
         trunks = game.add.group();
         var trunk = game.add.sprite(root.x, root.y - 32, 'tree', game.rnd.integerInRange(0, 5));
         trunk.anchor.setTo(0.5, 1);
-        game.add.tween(trunk.scale).to({x: 2.0, y: 2.0}, 200, Phaser.Easing.Bounce.Out, true);
+        game.add.tween(trunk.scale).to({
+            x: 2.0,
+            y: 2.0
+        }, 200, Phaser.Easing.Bounce.Out, true);
     } else {
         var bias = ((sun.x + (sun.width / 2)) - (game.stage.width / 2)) / 8;
         var trunk = game.add.sprite(lastTrunk.x + bias, lastTrunk.y - 32, 'tree', game.rnd.integerInRange(0, 5));
         trunk.anchor.setTo(0.5, 1);
-        game.add.tween(trunk.scale).to({x: 2.0, y: 2.0}, 200, Phaser.Easing.Bounce.Out, true);
+        game.add.tween(trunk.scale).to({
+            x: 2.0,
+            y: 2.0
+        }, 200, Phaser.Easing.Bounce.Out, true);
     }
     trunks.add(trunk);
     lastTrunk = trunk;
@@ -78,11 +88,16 @@ function Camerafollow(target, offsetX, offsetY) {
 }
 
 function update() {
-    if(lastTrunk)
+    if (lastTrunk)
         Camerafollow(lastTrunk, 0, 100);
     
-    updateSun();
-    
+    if (!gameover) {
+        updateSun();
+
+        if (trunks)
+            checkTrunkOutofBound();
+    }
+
     if (cursors.left.isDown) {
         if (sun.x > 10) {
             sun_shadow.x -= 6;
@@ -92,6 +107,22 @@ function update() {
         if (sun.x < 324) {
             sun_shadow.x += 6;
             sun.x += 6;
+        }
+    }
+}
+
+function checkTrunkOutofBound() {
+    for (var i = 0, len = trunks.children.length; i < len; i++) {
+        var trunk = trunks.children[i];
+        if (((trunk.x - trunk.width / 2) < 0) || (trunk.x + trunk.width / 2) > windowWidth) {
+            console.log('bye');
+            game.physics.startSystem(Phaser.Physics.P2JS);
+            game.physics.p2.gravity.y = 980;
+            for (var j = 0; j < len; j++) {
+                game.physics.p2.enable(trunks.children[j], false);
+            }
+            game.time.events.remove(createTrunkEvent);
+            gameover = true;
         }
     }
 }
