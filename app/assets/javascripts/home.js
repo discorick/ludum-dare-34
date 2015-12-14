@@ -7,6 +7,7 @@ function preload() {
   game.scale.refresh();
 
   game.load.spritesheet('start_btn', 'assets/start_btn.png', 200, 120);
+  game.load.spritesheet('restart_btn', 'assets/restart_btn.png', 240, 60);
   game.load.spritesheet('sun', 'assets/dizzy_sun.png', 80, 80, 24);
   game.load.spritesheet('gameover', 'assets/gameover.png', 414, 260, 16);
   game.load.image('tree', 'assets/tree-strip.png');
@@ -27,7 +28,8 @@ function create() {
   music.loop = true;
   music.play();
 
-  button = game.add.button(game.world.centerX - 100, 300, 'start_btn', gameStart, this, 1, 0, 2);
+  start_btn = game.add.button(game.world.centerX - 100, 300, 'start_btn', gameStart, this, 1, 0, 2);
+  restart_btn = game.add.button(game.world.centerX - 120, 500, 'restart_btn', gameRestart, this, 1, 0, 2);
 
 }
 
@@ -47,6 +49,10 @@ function update() {
 
 function gameStart() {
   // game start here
+}
+
+function gameRestart() {
+  // game restart here
 }
 
 function drawGrass(){
