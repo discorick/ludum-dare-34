@@ -95,7 +95,7 @@ function createTrunk() {
         group.add(trunk);
     }
     
-    if (count % 5 == 0) {
+    if (game.rnd.integerInRange(0, 2) == 0) {
         var branch = createBranch(trunk, count % 2 == 0);
         group.add(branch);
     }
@@ -108,10 +108,10 @@ function createTrunk() {
 function createBranch(trunk, inverse) {
     var delay = game.rnd.integerInRange(200, 2000);
     if (!inverse) {
-        var branch = game.add.sprite(0, trunk.y + trunk.height / 2, 'branch');
+        var branch = game.add.sprite(trunk.x, trunk.y + trunk.height / 2, 'branch');
         branch.anchor.setTo(0, 1);
     } else {
-        var branch = game.add.sprite(0, trunk.y + trunk.height / 2, 'branch-flip');
+        var branch = game.add.sprite(trunk.x, trunk.y + trunk.height / 2, 'branch-flip');
         branch.anchor.setTo(1, 1);
     }
     branch.scale.setTo(0, 0);
