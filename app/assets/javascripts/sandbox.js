@@ -88,10 +88,10 @@ function createTrunk() {
         group.add(trunk);
     } else {
         var group = game.add.group();
-        //var prop = ((sun.x + sun.width / 2) - (windowWidth / 2)) / windowWidth;
+        var prop = game.rnd.integerInRange(-trunkSize / 8, trunkSize / 8);
         var bias = ((sun.x + sun.width / 2) - lastTrunk.x);
         bias = Math.abs(bias) > maxBias ? (Math.sign(bias) * maxBias) : bias;
-        var trunk = game.add.sprite(lastTrunk.x + bias, lastTrunk.y - trunkSize, 'tree', game.rnd.integerInRange(0, 5));
+        var trunk = game.add.sprite(lastTrunk.x + bias + prop, lastTrunk.y - trunkSize, 'tree', game.rnd.integerInRange(0, 5));
         trunk.anchor.setTo(0.5, 1);
         game.add.tween(trunk.scale).to({
             x: 1.5,
@@ -167,7 +167,7 @@ function update() {
 }
 
 var wind = null;
-var windPower = 30;
+var windPower = 50;
 var power = 0;
 var maxCum = 30;
 
