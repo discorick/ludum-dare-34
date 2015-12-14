@@ -3,19 +3,25 @@ $(window).on("blur focus", function (e) {
     if (prevType != e.type) {
         switch (e.type) {
             case "blur":
-                if (music)
-                    music.pause();
+                if (bgmusic)
+                    bgmusic.pause();
                 break;
             case "focus":
-                if (music)
-                    music.resume();
+                if (bgmusic)
+                    bgmusic.resume();
                 break;
         }
     }
     $(this).data("prevType", e.type);
 });
 
-var music = null;
+var bgmusic = null;
+var theme_music = null;
+var falling_tree = null;
+var finish_music = null;
+var wind01 = null;
+var wind02 = null;
+var explosion = null;
 
 var windowWidth = 414;
 var windowHeight = 736;
@@ -46,8 +52,14 @@ function preload() {
     game.load.spritesheet('wind-flip', 'assets/wind-flip.png', 414, 80, 20);
     game.load.spritesheet('sun', 'assets/dizzy_sun.png', 80, 80, 24);
     game.load.spritesheet('tree', 'assets/tree-strip.png', 32, 32);
-    game.load.spritesheet('big_sun', 'assets/big_sun.png', 414, 300, 4)
+    game.load.spritesheet('big_sun', 'assets/big_sun.png', 414, 300, 4);
+    
+    game.load.audio('falling_tree', 'assets/falling_tree.ogg');
+    game.load.audio('finish_music', 'assets/finish_music.ogg');
     game.load.audio('bgmusic', 'assets/bgmusic01.ogg');
+    game.load.audio('theme_music', 'assets/theme_music.ogg');
+    game.load.audio('wind01', 'assets/wind01.ogg');
+    game.load.audio('wind02', 'assets/wind02.ogg');
 }
 
 function render() {
@@ -69,10 +81,17 @@ function create() {
 
     cursors = game.input.keyboard.createCursorKeys();
     createSun();
-
-    music = game.add.audio('bgmusic', 1, true);
-    music.loop = true;
-    music.play();
+    
+    bgmusic = game.add.audio('bgmusic');
+    theme_music = game.add.audio('theme_music');
+    falling_tree = game.add.audio('falling_tree');
+    finish_music = game.add.audio('finish_music');
+    wind01 = game.add.audio('wind01', 0.2);
+    wind02 = game.add.audio('wind02', 0.2);
+    explosion = game.add.audio('explosion', 1);
+    
+    bgmusic.loop = true;
+    bgmusic.play();
 
     createRoot();
     createTrunkEvent = game.time.events.loop(Phaser.Timer.SECOND / 2, createTrunk, this);
@@ -200,6 +219,10 @@ function createWind() {
         var random = game.rnd.integerInRange(-windPower, windPower) / 10;
         setTimeout(function () {
             power = random;
+            if(game.rnd.integerInRange(0, 1) == 0)
+                wind01.play();
+            else
+                wind02.play();
         }, 2000);
         if (random != 0) {
             if (random > 0) {
@@ -251,6 +274,11 @@ function checkTrunkReachtop() {
     if (lastTrunk.y < 200) {
         removeEvents();
         gameend = true;
+        
+        bgmusic.stop();
+        setTimeout(function() {
+            finish_music.play();
+        }, 1000);
         console.log('end');
     }
 }
@@ -268,6 +296,9 @@ function checkTrunkOutofBound() {
             }
             removeEvents();
             gameover = true;
+            
+            bgmusic.stop();
+            falling_tree.play();
             console.log('bye');
             break;
         }
