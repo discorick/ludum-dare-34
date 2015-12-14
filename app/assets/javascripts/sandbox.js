@@ -1,9 +1,29 @@
+$(window).on("blur focus", function (e) {
+    var prevType = $(this).data("prevType");
+    if (prevType != e.type) {
+        switch (e.type) {
+            case "blur":
+                if (music)
+                    music.pause();
+                break;
+            case "focus":
+                if (music)
+                    music.resume();
+                break;
+        }
+    }
+    $(this).data("prevType", e.type);
+});
+
+var music = null;
+
 var windowWidth = 414;
 var windowHeight = 736;
 var cameraPos = null;
 var cameraLerp = 0.1;
 
 var gameover = false;
+var gameend = false;
 
 var game = new Phaser.Game(windowWidth, windowHeight, Phaser.AUTO, 'game', {
     preload: preload,
@@ -38,7 +58,7 @@ var createWindEvent = null;
 
 function create() {
     game.stage.backgroundColor = 0xC0FFEE;
-    game.world.setBounds(0, 0, windowWidth, 7160);
+    game.world.setBounds(0, 0, windowWidth, 10400);
     game.camera.setPosition(0, game.world.height);
     cameraPos = new Phaser.Point(0, game.world.height);
 
@@ -143,14 +163,17 @@ function update() {
     if (lastTrunk)
         Camerafollow(lastTrunk, 0, 100);
 
-    if (!gameover) {
+    if (!gameover && !gameend) {
         updateSun();
+
+        if (trunks)
+            shakeTree();
 
         if (trunks)
             checkTrunkOutofBound();
 
         if (trunks)
-            shakeTree();
+            checkTrunkReachtop();
     }
 
     if (cursors.left.isDown) {
@@ -176,8 +199,8 @@ function createWind() {
         var random = game.rnd.integerInRange(-windPower, windPower) / 10;
         setTimeout(function () {
             power = random;
-        }, 1000);
-        if(random != 0) {
+        }, 2000);
+        if (random != 0) {
             if (random > 0) {
                 wind = game.add.sprite(windowWidth / 2, game.camera.position.y, 'wind-flip');
             } else {
@@ -187,7 +210,7 @@ function createWind() {
             wind.anchor.setTo(0.5, 0.5);
             wind.scale.setTo(scale, scale);
             wind.animations.add('blow');
-            wind.animations.play('blow', 10, false, true);
+            wind.animations.play('blow', 5, false, true);
             wind.animations.currentAnim.onComplete.add(function () {
                 wind = null;
             }, this);
@@ -216,15 +239,25 @@ function shakeTree() {
 
     if (Math.abs(power) >= 0.001)
         power /= 1.1;
-//    else
-//        power = 0;
+}
+
+function removeEvents() {
+    game.time.events.remove(createTrunkEvent);
+    game.time.events.remove(createWindEvent);
+}
+
+function checkTrunkReachtop() {
+    if (lastTrunk.y < 200) {
+        removeEvents();
+        gameend = true;
+        console.log('end');
+    }
 }
 
 function checkTrunkOutofBound() {
     for (var i = 0, len = trunks.children.length; i < len; i++) {
         var trunk = trunks.children[i].children[0];
         if (((trunk.x - trunk.width / 2) < 0) || (trunk.x + trunk.width / 2) > windowWidth) {
-            console.log('bye');
             game.physics.startSystem(Phaser.Physics.P2JS);
             game.physics.p2.gravity.y = 980;
             for (var j = 0; j < len; j++) {
@@ -232,9 +265,9 @@ function checkTrunkOutofBound() {
                     game.physics.p2.enable(trunks.children[j].children[k], false);
                 }
             }
-            game.time.events.remove(createTrunkEvent);
-            game.time.events.remove(createWindEvent);
+            removeEvents();
             gameover = true;
+            console.log('bye');
             break;
         }
     }
