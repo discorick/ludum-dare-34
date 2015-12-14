@@ -1,4 +1,4 @@
-var game = new Phaser.Game(414, 736, Phaser.AUTO, 'swindy-tree', { preload: preload, create: create, update: update });
+var game = new Phaser.Game(414, 736, Phaser.AUTO, 'game', { preload: preload, create: create, update: update });
 
 function preload() {
   game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
@@ -6,7 +6,9 @@ function preload() {
   game.scale.pageAlignVertically = true;
   game.scale.refresh();
 
+  game.load.spritesheet('start_btn', 'assets/start_btn.png', 200, 120);
   game.load.spritesheet('sun', 'assets/dizzy_sun.png', 80, 80, 24);
+  game.load.spritesheet('gameover', 'assets/gameover.png', 414, 260, 16);
   game.load.image('tree', 'assets/tree-strip.png');
   game.load.image('grass1', 'assets/grass1.png');
   game.load.image('grass2', 'assets/grass2.png');
@@ -14,7 +16,7 @@ function preload() {
 }
 
 function create() {
-  game.stage.backgroundColor = 0xbada55;
+  game.stage.backgroundColor = 0xc0ffee;
   drawGrass();
 
   createSun();
@@ -22,7 +24,11 @@ function create() {
   cursors = game.input.keyboard.createCursorKeys();
 
   music = game.add.audio('bgmusic',1,true);
-  music.play('',0,1,true);
+  music.loop = true;
+  music.play();
+
+  button = game.add.button(game.world.centerX - 100, 300, 'start_btn', gameStart, this, 1, 0, 2);
+
 }
 
 function update() {
@@ -37,6 +43,10 @@ function update() {
       sun.x += 6;
     }
   }
+}
+
+function gameStart() {
+  // game start here
 }
 
 function drawGrass(){
