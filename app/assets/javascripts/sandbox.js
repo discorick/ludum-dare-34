@@ -58,7 +58,7 @@ var createWindEvent = null;
 
 function create() {
     game.stage.backgroundColor = 0xC0FFEE;
-    game.world.setBounds(0, 0, windowWidth, 10400);
+    game.world.setBounds(0, 0, windowWidth, 11600);
     game.camera.setPosition(0, game.world.height);
     cameraPos = new Phaser.Point(0, game.world.height);
 
