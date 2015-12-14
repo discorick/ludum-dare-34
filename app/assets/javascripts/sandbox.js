@@ -19,8 +19,11 @@ function preload() {
     game.scale.refresh();
 
     game.load.image('bg', 'assets/bg.png');
+    game.load.image('grass', 'assets/grass.png');
+    game.load.image('bud-1', 'assets/bud-1.png');
+    game.load.image('branch-1', 'assets/branch-1.png');
     game.load.spritesheet('sun', 'assets/dizzy_sun.png', 80, 80, 24);
-    game.load.spritesheet('tree', 'assets/tree-strip.png', 16, 16);
+    game.load.spritesheet('tree', 'assets/tree-strip.png', 32, 32);
     game.load.audio('bgmusic', 'assets/bgmusic01.ogg');
 }
 
@@ -31,12 +34,14 @@ function render() {
 var createTrunkEvent = null;
 
 function create() {
-    game.add.sprite(0, 0, 'bg');
-    
     game.stage.backgroundColor = 0xC0FFEE;
     game.world.setBounds(0, 0, windowWidth, 7160);
     game.camera.setPosition(0, game.world.height);
     cameraPos = new Phaser.Point(0, game.world.height);
+    
+    game.add.sprite(0, 0, 'bg');
+    var grass = game.add.tileSprite(0, game.world.height - 64, game.world.width, 64, 'grass');
+    grass.anchor.setTo(0, 0);
 
     cursors = game.input.keyboard.createCursorKeys();
     createSun();
@@ -53,34 +58,36 @@ var count = 0;
 var root = null;
 var trunks = null;
 var lastTrunk = null;
+var trunkZoom = 1.5;
+var trunkSize = 32 * trunkZoom;
 
 function createRoot() {
-    root = game.add.sprite(game.world.width / 2, game.world.height - 32, 'tree', 0);
+    root = game.add.sprite(game.world.width / 2, game.world.height - trunkSize / 2, 'tree', 0);
     root.anchor.setTo(0.5, 1);
-    root.scale.setTo(2, 2);
+    root.scale.setTo(trunkZoom, trunkZoom);
     count++;
 }
 
-var maxBias = 16;
+var maxBias = trunkSize / 2;
 
 function createTrunk() {
     if (!trunks) {
         trunks = game.add.group();
         
-        var trunk = game.add.sprite(root.x, root.y - 32, 'tree', game.rnd.integerInRange(0, 5));
+        var trunk = game.add.sprite(root.x, root.y - trunkSize, 'tree', game.rnd.integerInRange(0, 5));
         trunk.anchor.setTo(0.5, 1);
         game.add.tween(trunk.scale).to({
-            x: 2.0,
-            y: 2.0
+            x: 1.5,
+            y: 1.5
         }, 200, Phaser.Easing.Bounce.Out, true);
     } else {
-        var bias = ((sun.x + sun.width / 2) - lastTrunk.x) / 8;
+        var bias = ((sun.x + sun.width / 2) - lastTrunk.x);
         bias = Math.abs(bias) > maxBias ? Math.sign(bias) * maxBias : bias;
-        var trunk = game.add.sprite(lastTrunk.x + bias, lastTrunk.y - 32, 'tree', game.rnd.integerInRange(0, 5));
+        var trunk = game.add.sprite(lastTrunk.x + bias, lastTrunk.y - trunkSize, 'tree', game.rnd.integerInRange(0, 5));
         trunk.anchor.setTo(0.5, 1);
         game.add.tween(trunk.scale).to({
-            x: 2.0,
-            y: 2.0
+            x: 1.5,
+            y: 1.5
         }, 200, Phaser.Easing.Bounce.Out, true);
     }
     trunks.add(trunk);
@@ -132,7 +139,7 @@ function shakeTree() {
     
     for (var i = 0, len = trunks.children.length; i < len; i++) {
         var trunk = trunks.children[i];
-        if(trunk.y < game.camera.position.y + windowHeight / 2 + 32) {
+        if(trunk.y < game.camera.position.y + windowHeight / 2 + trunkSize) {
             var newX = trunk.x + (power * (i > maxCum ? maxCum : i));
             trunk.x += (newX - trunk.x) * 0.1;
         }
