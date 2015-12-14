@@ -46,6 +46,7 @@ function preload() {
     game.load.spritesheet('wind-flip', 'assets/wind-flip.png', 414, 80, 20);
     game.load.spritesheet('sun', 'assets/dizzy_sun.png', 80, 80, 24);
     game.load.spritesheet('tree', 'assets/tree-strip.png', 32, 32);
+    game.load.spritesheet('big_sun', 'assets/big_sun.png', 414, 300, 4)
     game.load.audio('bgmusic', 'assets/bgmusic01.ogg');
 }
 
@@ -290,4 +291,8 @@ function createSun() {
     sun = game.add.sprite(167, 5, 'sun');
     sun.animations.add('whirl');
     sun.animations.play('whirl', 20, true);
+
+    big_sun = game.add.sprite(0, 0, 'big_sun');
+    big_sun.animations.add('sun_burn');
+    big_sun.animations.play('sun_burn', 5, true);
 }
