@@ -20,8 +20,8 @@ function preload() {
 
     game.load.image('bg', 'assets/bg.png');
     game.load.image('grass', 'assets/grass.png');
-    game.load.image('bud-1', 'assets/bud-1.png');
-    game.load.image('branch-1', 'assets/branch-1.png');
+    game.load.spritesheet('branch', 'assets/branch.png', 16, 16, 2);
+    game.load.spritesheet('branch-flip', 'assets/branch-flip.png', 16, 16, 2);
     game.load.spritesheet('sun', 'assets/dizzy_sun.png', 80, 80, 24);
     game.load.spritesheet('tree', 'assets/tree-strip.png', 32, 32);
     game.load.audio('bgmusic', 'assets/bgmusic01.ogg');
@@ -38,7 +38,7 @@ function create() {
     game.world.setBounds(0, 0, windowWidth, 7160);
     game.camera.setPosition(0, game.world.height);
     cameraPos = new Phaser.Point(0, game.world.height);
-    
+
     game.add.sprite(0, 0, 'bg');
     var grass = game.add.tileSprite(0, game.world.height - 64, game.world.width, 64, 'grass');
     grass.anchor.setTo(0, 0);
@@ -74,13 +74,16 @@ function createTrunk() {
     if (!trunks) {
         trunks = game.add.group();
         
+        var group = game.add.group();
         var trunk = game.add.sprite(root.x, root.y - trunkSize, 'tree', game.rnd.integerInRange(0, 5));
         trunk.anchor.setTo(0.5, 1);
         game.add.tween(trunk.scale).to({
             x: 1.5,
             y: 1.5
         }, 200, Phaser.Easing.Bounce.Out, true);
+        group.add(trunk);
     } else {
+        var group = game.add.group();
         var bias = ((sun.x + sun.width / 2) - lastTrunk.x);
         bias = Math.abs(bias) > maxBias ? Math.sign(bias) * maxBias : bias;
         var trunk = game.add.sprite(lastTrunk.x + bias, lastTrunk.y - trunkSize, 'tree', game.rnd.integerInRange(0, 5));
@@ -89,10 +92,40 @@ function createTrunk() {
             x: 1.5,
             y: 1.5
         }, 200, Phaser.Easing.Bounce.Out, true);
+        group.add(trunk);
     }
-    trunks.add(trunk);
+    
+    if (count % 5 == 0) {
+        var branch = createBranch(trunk, count % 2 == 0);
+        group.add(branch);
+    }
+    
+    trunks.add(group);
     lastTrunk = trunk;
     count++;
+}
+
+function createBranch(trunk, inverse) {
+    var delay = game.rnd.integerInRange(200, 2000);
+    if (!inverse) {
+        var branch = game.add.sprite(0, trunk.y + trunk.height / 2, 'branch');
+        branch.anchor.setTo(0, 1);
+    } else {
+        var branch = game.add.sprite(0, trunk.y + trunk.height / 2, 'branch-flip');
+        branch.anchor.setTo(1, 1);
+    }
+    branch.scale.setTo(0, 0);
+    setTimeout(function () {
+        var tween = game.add.tween(branch.scale).to({
+            x: 2.0,
+            y: 2.0
+        }, 100, Phaser.Easing.Bounce.Out, true);
+        tween.onComplete.add(function() {
+            branch.animations.add('grow');
+            branch.animations.play('grow', 4, false);
+        }, this);
+    }, delay);
+    return branch;
 }
 
 function Camerafollow(target, offsetX, offsetY) {
@@ -104,13 +137,13 @@ function Camerafollow(target, offsetX, offsetY) {
 function update() {
     if (lastTrunk)
         Camerafollow(lastTrunk, 0, 100);
-    
+
     if (!gameover) {
         updateSun();
 
         if (trunks)
             checkTrunkOutofBound();
-        
+
         if (trunks)
             shakeTree();
     }
@@ -128,7 +161,6 @@ function update() {
     }
 }
 
-
 var windPower = 1;
 var power = 0;
 var maxCum = 30;
@@ -136,25 +168,31 @@ var maxCum = 30;
 function shakeTree() {
     if (game.time.now % 9 < 2)
         power = game.rnd.integerInRange(-windPower, windPower);
-    
+
     for (var i = 0, len = trunks.children.length; i < len; i++) {
-        var trunk = trunks.children[i];
-        if(trunk.y < game.camera.position.y + windowHeight / 2 + trunkSize) {
+        var trunk = trunks.children[i].children[0];
+        if (trunk.y < game.camera.position.y + windowHeight / 2 + trunkSize) {
             var newX = trunk.x + (power * (i > maxCum ? maxCum : i));
-            trunk.x += (newX - trunk.x) * 0.1;
+            //trunk.x += (newX - trunk.x) * 0.1;
+            for (var k = 0; k < trunks.children[i].length; k++) {
+                var child = trunks.children[i].children[k];
+                    child.x += (newX - child.x) * 0.1;
+            }
         }
     }
 }
 
 function checkTrunkOutofBound() {
     for (var i = 0, len = trunks.children.length; i < len; i++) {
-        var trunk = trunks.children[i];
+        var trunk = trunks.children[i].children[0];
         if (((trunk.x - trunk.width / 2) < 0) || (trunk.x + trunk.width / 2) > windowWidth) {
             console.log('bye');
             game.physics.startSystem(Phaser.Physics.P2JS);
             game.physics.p2.gravity.y = 980;
             for (var j = 0; j < len; j++) {
-                game.physics.p2.enable(trunks.children[j], false);
+                for (var k = 0; k < trunks.children[j].length; k++) {
+                    game.physics.p2.enable(trunks.children[j].children[k], false);
+                }
             }
             game.time.events.remove(createTrunkEvent);
             gameover = true;
