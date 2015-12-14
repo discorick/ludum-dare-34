@@ -28,6 +28,7 @@ var windowHeight = 736;
 var cameraPos = null;
 var cameraLerp = 0.1;
 
+var gamestart = false;
 var gameover = false;
 var gameend = false;
 
@@ -44,6 +45,12 @@ function preload() {
     game.scale.pageAlignVertically = true;
     game.scale.refresh();
 
+    game.load.spritesheet('logo', 'assets/logo.png', 414, 200);
+    game.load.spritesheet('gameover', 'assets/gameover.png', 414, 260);
+    
+    game.load.spritesheet('start-btn', 'assets/start_btn.png', 200, 120);
+    game.load.spritesheet('restart-btn', 'assets/restart_btn.png', 240, 60);
+
     game.load.image('bg', 'assets/bg.png');
     game.load.image('grass', 'assets/grass.png');
     game.load.spritesheet('branch', 'assets/branch.png', 16, 16, 2);
@@ -53,13 +60,17 @@ function preload() {
     game.load.spritesheet('sun', 'assets/dizzy_sun.png', 80, 80, 24);
     game.load.spritesheet('tree', 'assets/tree-strip.png', 32, 32);
     game.load.spritesheet('big_sun', 'assets/big_sun.png', 414, 300, 4);
-    
+
+    for (var i = 1; i <= 8; i++)
+        game.load.spritesheet('flower0' + i, 'assets/flower0' + i + '.png', 60, 60, 4);
+
     game.load.audio('falling_tree', 'assets/falling_tree.ogg');
     game.load.audio('finish_music', 'assets/finish_music.ogg');
     game.load.audio('bgmusic', 'assets/bgmusic01.ogg');
     game.load.audio('theme_music', 'assets/theme_music.ogg');
     game.load.audio('wind01', 'assets/wind01.ogg');
     game.load.audio('wind02', 'assets/wind02.ogg');
+    game.load.audio('explosion', 'assets/explosion.ogg');
 }
 
 function render() {
@@ -68,6 +79,12 @@ function render() {
 
 var createTrunkEvent = null;
 var createWindEvent = null;
+
+var logo = null;
+var gameover_text = null;
+
+var start_btn = null;
+var restart_btn = null;
 
 function create() {
     game.stage.backgroundColor = 0xC0FFEE;
@@ -81,27 +98,66 @@ function create() {
 
     cursors = game.input.keyboard.createCursorKeys();
     createSun();
-    
+
     bgmusic = game.add.audio('bgmusic');
-    theme_music = game.add.audio('theme_music');
+    theme_music = game.add.audio('theme_music', 1, true);
     falling_tree = game.add.audio('falling_tree');
-    finish_music = game.add.audio('finish_music');
+    finish_music = game.add.audio('finish_music', 1, true);
     wind01 = game.add.audio('wind01', 0.2);
     wind02 = game.add.audio('wind02', 0.2);
     explosion = game.add.audio('explosion', 1);
     
-    bgmusic.loop = true;
+    logo = game.add.sprite(game.camera.position.x, game.camera.position.y - windowHeight / 4, 'logo');
+    logo.anchor.setTo(0.5, 0.5);
+    logo.animations.add('logo');
+    logo.animations.play('logo', 6, true);
+    
+    gameover_text = game.add.sprite(game.camera.position.x, game.camera.position.y - windowHeight / 4, 'gameover');
+    gameover_text.anchor.setTo(0.5, 0.5);
+
+    start_btn = game.add.button(game.camera.position.x, game.camera.position.y + windowHeight / 4, 'start-btn', startGame, this, 2, 1, 0);
+    start_btn.anchor.setTo(0.5, 0.5);
+
+    restart_btn = game.add.button(game.camera.position.x, game.camera.position.y + windowHeight / 4, 'restart-btn', function () {
+        location.reload();
+    }, this, 2, 1, 0);
+    restart_btn.anchor.setTo(0.5, 0.5);
+
+    setupGame();
+}
+
+function setupGame() {
+    logo.visible = true;
+    gameover_text.visible = false;
+    
+    start_btn.visible = true;
+    restart_btn.visible = false;
+
+    bgmusic.stop();
+
+    theme_music.play();
+}
+
+function startGame() {
+    logo.visible = false;
+    
+    theme_music.stop();
     bgmusic.play();
+
+    start_btn.visible = false;
 
     createRoot();
     createTrunkEvent = game.time.events.loop(Phaser.Timer.SECOND / 2, createTrunk, this);
     createWindEvent = game.time.events.loop(Phaser.Timer.SECOND, createWind, this);
+
+    gamestart = true;
 }
 
 var count = 0;
 var root = null;
 var trunks = null;
 var lastTrunk = null;
+
 var trunkZoom = 1.5;
 var trunkSize = 32 * trunkZoom;
 
@@ -173,6 +229,31 @@ function createBranch(trunk, inverse) {
     return branch;
 }
 
+var emitter = null;
+
+function createFlowers() {
+    var flowers = [];
+    for (var i = 1; i <= 8; i++)
+        flowers.push("flower0" + i);
+    emitter = game.add.emitter(game.camera.position.x, game.camera.position.y - windowHeight / 2 + 64, 0);
+    emitter.makeParticles(flowers);
+
+    emitter.start(false, 5000);
+
+    setInterval(function () {
+        emitter.forEach(function (singleParticle) {
+            var anim = singleParticle.animations.getAnimation("blossom");
+            if (!anim) {
+                singleParticle.animations.add('blossom');
+            } else if(!anim.isPlayed) {
+                singleParticle.animations.play('blossom', 4, false);
+            }
+        });
+    }, game.rnd.integerInRange(100, 500));
+
+    emitter.update();
+}
+
 function Camerafollow(target, offsetX, offsetY) {
     cameraPos.x += (target.x - cameraPos.x + offsetX) * cameraLerp; // smoothly adjust the x position
     cameraPos.y += (target.y - cameraPos.y + offsetY) * cameraLerp; // smoothly adjust the y position
@@ -180,31 +261,33 @@ function Camerafollow(target, offsetX, offsetY) {
 }
 
 function update() {
-    if (lastTrunk)
-        Camerafollow(lastTrunk, 0, 100);
+    if (gamestart) {
+        if (lastTrunk)
+            Camerafollow(lastTrunk, 0, 100);
 
-    if (!gameover && !gameend) {
-        updateSun();
+        if (!gameover && !gameend) {
+            updateSun();
 
-        if (trunks)
-            shakeTree();
+            if (trunks)
+                shakeTree();
 
-        if (trunks)
-            checkTrunkOutofBound();
+            if (trunks)
+                checkTrunkOutofBound();
 
-        if (trunks)
-            checkTrunkReachtop();
-    }
-
-    if (cursors.left.isDown) {
-        if (sun.x > -sun.width / 2) {
-            sun_shadow.x -= 6;
-            sun.x -= 6;
+            if (trunks)
+                checkTrunkReachtop();
         }
-    } else if (cursors.right.isDown) {
-        if (sun.x < windowWidth - sun.width / 2) {
-            sun_shadow.x += 6;
-            sun.x += 6;
+
+        if (cursors.left.isDown) {
+            if (sun.x > -sun.width / 2) {
+                sun_shadow.x -= 6;
+                sun.x -= 6;
+            }
+        } else if (cursors.right.isDown) {
+            if (sun.x < windowWidth - sun.width / 2) {
+                sun_shadow.x += 6;
+                sun.x += 6;
+            }
         }
     }
 }
@@ -219,7 +302,7 @@ function createWind() {
         var random = game.rnd.integerInRange(-windPower, windPower) / 10;
         setTimeout(function () {
             power = random;
-            if(game.rnd.integerInRange(0, 1) == 0)
+            if (game.rnd.integerInRange(0, 1) == 0)
                 wind01.play();
             else
                 wind02.play();
@@ -274,11 +357,16 @@ function checkTrunkReachtop() {
     if (lastTrunk.y < 200) {
         removeEvents();
         gameend = true;
-        
+
         bgmusic.stop();
-        setTimeout(function() {
+        explosion.play();
+        setTimeout(function () {
             finish_music.play();
-        }, 1000);
+            createFlowers();
+            logo.position.setTo(game.camera.position.x, game.camera.position.y);
+            logo.visible = true;
+            logo.bringToTop();
+        }, 4000);
         console.log('end');
     }
 }
@@ -296,9 +384,13 @@ function checkTrunkOutofBound() {
             }
             removeEvents();
             gameover = true;
-            
+
             bgmusic.stop();
             falling_tree.play();
+            restart_btn.visible = true;
+            gameover_text.visible = true;
+            gameover_text.animations.add('gameover');
+            gameover_text.animations.play('gameover', 6, true);
             console.log('bye');
             break;
         }
