@@ -101,7 +101,7 @@ function create() {
 
     bgmusic = game.add.audio('bgmusic');
     theme_music = game.add.audio('theme_music', 1, true);
-    falling_tree = game.add.audio('falling_tree');
+    falling_tree = game.add.audio('falling_tree', 0.6);
     finish_music = game.add.audio('finish_music', 1, true);
     wind01 = game.add.audio('wind01', 0.2);
     wind02 = game.add.audio('wind02', 0.2);
@@ -388,7 +388,9 @@ function checkTrunkOutofBound() {
             bgmusic.stop();
             falling_tree.play();
             restart_btn.visible = true;
+            restart_btn.bringToTop();
             gameover_text.visible = true;
+            gameover_text.bringToTop();
             gameover_text.animations.add('gameover');
             gameover_text.animations.play('gameover', 6, true);
             console.log('bye');
